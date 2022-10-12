@@ -115,7 +115,7 @@ if env['HAVE_DRAMSIM']:
     Source('dramsim2.cc')
 
 if env['HAVE_RAMULATOR']:
-    SimObject("Ramulator.py")
+    SimObject("Ramulator.py", sim_objects=['Ramulator'])
     Source('ramulator.cc')
     DebugFlag("Ramulator")
 

@@ -1,0 +1,47 @@
+DRAM.h:12:#include <type_traits>
+DRAM.h:19:template <typename T>
+DRAM.h:103:    function<typename T::Command(DRAM<T>*, typename T::Command cmd, int)>* prereq;
+DRAM.h:117:    vector<typename T::TimingEntry>* timing;
+DRAM.h:126:template <typename T>
+DRAM.h:171:template <typename T>
+DRAM.h:189:template <typename T>
+DRAM.h:230:template <typename T>
+DRAM.h:238:template <typename T>
+DRAM.h:247:template <typename T>
+DRAM.h:266:template <typename T>
+DRAM.h:282:template <typename T>
+DRAM.h:297:template <typename T>
+DRAM.h:312:template <typename T>
+DRAM.h:325:template <typename T>
+DRAM.h:335:template <typename T>
+DRAM.h:351:template <typename T>
+DRAM.h:408:template <typename T>
+Statistics.h:140:    template <typename U>
+Statistics.h:143:    template <typename U>
+Statistics.h:146:    template <typename U>
+Statistics.h:178:    template<typename U>
+StatType.h:219:  template <typename U>
+StatType.h:222:  template <typename U>
+StatType.h:225:  template <typename U>
+StatType.h:251:  template <typename U>
+StatType.h:254:  template <typename U>
+StatType.h:257:  template <typename U>
+StatType.h:294:  template <typename U>
+StatType.h:297:  template <typename U>
+StatType.h:300:  template <typename U>
+Refresh.h:32:template <typename T>
+Refresh.h:35:template <typename T>
+Main.cpp:37:template<typename T>
+Main.cpp:82:template <typename T>
+Main.cpp:153:template<typename T>
+Main.cpp:181:        printf("Usage: %s <configs-file> --mode=cpu,dram [--stats <filename>] <trace-filename1> <trace-filename2>\n"
+Memory.h:20:#include <tuple>
+Memory.h:46:template <class T, template<typename> class Controller = Controller >
+Memory.h:120:        assert((1<<tx_bits) == tx);
+Scheduler.h:63:template <typename T>
+Scheduler.h:66:template <typename T>
+Scheduler.h:211:template <typename T>
+Scheduler.h:270:template <typename T>
+Controller.h:30:template <typename T>
+SpeedyController.h:22:template <typename T>
+MemoryFactory.h:19:template <typename T>

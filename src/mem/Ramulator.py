@@ -1,11 +1,12 @@
 # -*- mode:python -*-
 from m5.params import *
-from AbstractMemory import *
+from m5.objects.AbstractMemory import *
 
 # A wrapper for Ramulator multi-channel memory controller
 class Ramulator(AbstractMemory):
     type = 'Ramulator'
     cxx_header = "mem/ramulator.hh"
+    cxx_class = 'gem5::memory::Ramulator'
 
     # A single port for now
     port = SlavePort("Slave port")

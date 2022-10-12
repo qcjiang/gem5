@@ -8,11 +8,18 @@
 #include "mem/abstract_mem.hh"
 #include "params/Ramulator.hh"
 #include "Ramulator/src/Config.h"
-
 namespace ramulator{
     class Request;
     class Gem5Wrapper;
 }
+
+namespace gem5
+{
+
+namespace memory
+{
+
+
 
 class Ramulator : public AbstractMemory {
 private:
@@ -37,7 +44,7 @@ private:
             return mem.recvTimingReq(pkt);
         }
 
-        void recvRetry() {
+        void recvRespRetry() {
             mem.recvRetry();
         }
 
@@ -74,11 +81,11 @@ private:
 
 public:
     typedef RamulatorParams Params;
-    Ramulator(const Params *p);
+    Ramulator(const Params &p);
     virtual void init();
     virtual void startup();
     unsigned int drain(DrainManager* dm);
-    virtual BaseSlavePort& getSlavePort(const std::string& if_name, 
+    virtual Port& getPort(const std::string& if_name, 
         PortID idx = InvalidPortID);
     ~Ramulator();
 protected:
@@ -89,14 +96,9 @@ protected:
     void accessAndRespond(PacketPtr pkt);
     void readComplete(ramulator::Request& req);
     void writeComplete(ramulator::Request& req);
+    void create() const;
 };
+} // namespace memory
+} // namespace gem5
 
 #endif // __RAMULATOR_HH__
-}
-}
-}
-}
-}
-}
-}
-}

@@ -5,13 +5,19 @@
 #include "sim/system.hh"
 #include "debug/Ramulator.hh"
 
-Ramulator::Ramulator(const Params *p):
+namespace gem5
+{
+
+namespace memory
+{
+
+Ramulator::Ramulator(const Params &p):
     AbstractMemory(p),
     port(name() + ".port", *this),
     requestsInFlight(0),
     drain_manager(NULL),
-    config_file(p->config_file),
-    configs(p->config_file),
+    config_file(p.config_file),
+    configs(p.config_file),
     wrapper(NULL),
     read_cb_func(std::bind(&Ramulator::readComplete, this, std::placeholders::_1)),
     write_cb_func(std::bind(&Ramulator::writeComplete, this, std::placeholders::_1)),
@@ -20,8 +26,9 @@ Ramulator::Ramulator(const Params *p):
     req_stall(false),
     send_resp_event(this),
     tick_event(this) 
+
 {
-    configs.set_core_num(p->num_cpus);
+    configs.set_core_num(p.num_cpus);
 }
 Ramulator::~Ramulator()
 {
@@ -39,8 +46,8 @@ void Ramulator::init() {
 
     DPRINTF(Ramulator, "Instantiated Ramulator with config file '%s' (tCK=%lf, %d ticks per clk)\n", 
         config_file.c_str(), wrapper->tCK, ticks_per_clk);
-    Callback* cb = new MakeCallback<ramulator::Gem5Wrapper, &ramulator::Gem5Wrapper::finish>(wrapper);
-    registerExitCallback(cb);
+    // Callback* cb = new MakeCallback<ramulator::Gem5Wrapper, &ramulator::Gem5Wrapper::finish>(wrapper);
+    // registerExitCallback(cb);
 }
 
 void Ramulator::startup() {
@@ -52,18 +59,18 @@ unsigned int Ramulator::drain(DrainManager* dm) {
     // updated to include all in-flight requests
     // if (resp_queue.size()) {
     if (numOutstanding()) {
-        setDrainState(Drainable::Draining);
-        drain_manager = dm;
+        // setDrainState(Drainable::Draining);
+        // drain_manager = dm;
         return 1;
     } else {
-        setDrainState(Drainable::Drained);
+        // setDrainState(Drainable::Drained);
         return 0;
     }
 }
 
-BaseSlavePort& Ramulator::getSlavePort(const std::string& if_name, PortID idx) {
+Port& Ramulator::getPort(const std::string& if_name, PortID idx) {
     if (if_name != "port") {
-        return MemObject::getSlavePort(if_name, idx);
+        return ClockedObject::getPort(if_name, idx);
     } else {
         return port;
     }
@@ -95,7 +102,7 @@ void Ramulator::tick() {
     wrapper->tick();
     if (req_stall){
         req_stall = false;
-        port.sendRetry();
+        port.sendRetryReq();
     }
     schedule(tick_event, curTick() + ticks_per_clk);
 }
@@ -105,14 +112,14 @@ Tick Ramulator::recvAtomic(PacketPtr pkt) {
     access(pkt);
 
     // set an fixed arbitrary 50ns response time for atomic requests
-    return pkt->memInhibitAsserted() ? 0 : 50000;
+    return pkt->cacheResponding() ? 0 : 50000;
 }
 
 void Ramulator::recvFunctional(PacketPtr pkt) {
     pkt->pushLabel(name());
     functionalAccess(pkt);
     for (auto i = resp_queue.begin(); i != resp_queue.end(); ++i)
-        pkt->checkFunctional(*i);
+        pkt->trySatisfyFunctional(*i);
     pkt->popLabel();
 }
 
@@ -124,7 +131,7 @@ bool Ramulator::recvTimingReq(PacketPtr pkt) {
         delete pendPkt;
     pending_del.clear();
 
-    if (pkt->memInhibitAsserted()) {
+    if (pkt->cacheResponding()) {
         // snooper will supply based on copy of packet
         // still target's responsibility to delete packet
         pending_del.push_back(pkt);
@@ -133,8 +140,8 @@ bool Ramulator::recvTimingReq(PacketPtr pkt) {
 
     bool accepted = true;
     if (pkt->isRead()) {
-        DPRINTF(Ramulator, "context id: %d, thread id: %d\n", pkt->req->contextId(),
-            pkt->req->threadId());
+        // DPRINTF(Ramulator, "context id: %d, thread id: %d\n", pkt->req->contextId(),
+        //     pkt->req->threadId());
         ramulator::Request req(pkt->getAddr(), ramulator::Request::Type::READ, read_cb_func, pkt->req->contextId());
         accepted = wrapper->send(req);
         if (accepted){
@@ -181,7 +188,7 @@ void Ramulator::accessAndRespond(PacketPtr pkt) {
     access(pkt);
     if (need_resp) {
         assert(pkt->isResponse());
-        pkt->busFirstWordDelay = pkt->busLastWordDelay = 0;
+        pkt->headerDelay = pkt->headerDelay = 0;
 
         DPRINTF(Ramulator, "Queuing response for address %lld\n",
                 pkt->getAddr());
@@ -220,40 +227,13 @@ void Ramulator::writeComplete(ramulator::Request& req){
     }
 }
 
-Ramulator *RamulatorParams::create(){
-    return new Ramulator(this);
+// Ramulator *RamulatorParams::create(){
+//     return new Ramulator(this);
+// }
+Ramulator *create() {
+    // return new Ramulator(*this);
+    return nullptr;
 }
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
+
+} // namespace memory
+} // namespace gem5

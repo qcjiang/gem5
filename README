@@ -1,3 +1,22 @@
+# gem5-ramulator patch
+
+Updated **ramulator** patch with latest **gem5** simulator.
+
+## Usage
+
+We add ext/ramulator/ to this git repository, so you only need to follow the instructions provided by gem5 guide. An example:
+
+```
+sudo apt install build-essential git m4 scons zlib1g zlib1g-dev \
+    libprotobuf-dev protobuf-compiler libprotoc-dev libgoogle-perftools-dev \
+    python3-dev python-is-python3 libboost-all-dev pkg-config
+scons build/X86/gem5.opt -j9
+```
+
+# The old gem5 readme:
+
+
+
 This is the gem5 simulator.
 
 The main website can be found at http://www.gem5.org
